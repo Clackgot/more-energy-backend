@@ -1,12 +1,12 @@
 import { Trim } from 'class-sanitizer';
 import { IsEmail, IsString } from 'class-validator';
 
-export class CreateUserDto {
+
+export class LoginDto {
     @Trim()
     @IsEmail()
-    readonly email: string;
+    public readonly email: string;
+
     @IsString()
-    readonly password: string;
-    @IsString()
-    readonly username: string;
+    public readonly password: string;
 }
