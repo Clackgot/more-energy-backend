@@ -3,7 +3,10 @@ import { IsEmail, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateUserDto {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Идентификатор пользователя для удаления',
+    example: 1,
+  })
   readonly id: number;
 
   @ApiProperty({
