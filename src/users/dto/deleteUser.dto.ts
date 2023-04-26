@@ -1,3 +1,3 @@
 export class DeleteUserDto {
-    id: number;
+    readonly id: number;
 }
