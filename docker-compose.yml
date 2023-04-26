@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    ports:
+      - "${PORT}:${PORT}"
+    # env_file:
+    #   - ".development.env"
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    env_file:
+      - ".development.env"
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+    container_name: postgres
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes: 
+      - postgres:/var/lib/postgresql/data
+
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "placeholder@example.com"
+      PGADMIN_DEFAULT_PASSWORD: "fakepassword123"
+    ports:
+      - "16543:80"
+    logging:
+      driver: none
+    depends_on:
+      - postgres
+
+volumes:
+  postgres:
