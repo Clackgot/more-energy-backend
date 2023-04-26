@@ -5,6 +5,7 @@ import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { AuthHelper } from './auth.helper';
 import { User } from '../entities/user.entity'
+import { TokenDto } from './dto/token.dto';
 
 
 @Injectable()
@@ -38,7 +39,7 @@ export class AuthService {
     return this.repository.save(user);
   }
 
-  public async login(body: LoginDto): Promise<string | never> {
+  public async login(body: LoginDto): Promise<TokenDto | never> {
     const { email, password }: LoginDto = body;
     const user: User = await this.repository.findOne({ where: { email } });
 
@@ -54,12 +55,11 @@ export class AuthService {
 
     this.repository.update(user.id, { lastLoginAt: new Date() });
 
-    return this.helper.generateToken(user);
+    return { token: this.helper.generateToken(user) } as TokenDto;
   }
 
   public async refresh(user: User): Promise<string> {
     this.repository.update(user.id, { lastLoginAt: new Date() });
-
     return this.helper.generateToken(user);
   }
 }
