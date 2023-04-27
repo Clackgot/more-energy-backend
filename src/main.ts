@@ -7,15 +7,15 @@ async function start() {
   const PORT = process.env.PORT || 5000;
   const app = await NestFactory.create(AppModule);
   const options = new DocumentBuilder()
-  .setTitle('My API')
-  .setDescription('API description')
-  .setVersion('1.0')
-  .addTag('my-api')
-  .build();
+    .setTitle('My API')
+    .setDescription('API description')
+    .setVersion('1.0')
+    .addTag('my-api')
+    .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(PORT, () => console.log(`Серевер запущен на ${PORT} порту`))
+  await app.listen(PORT, () => console.log(`Сервер запущен на ${PORT} порту`))
 
 }
 start()
