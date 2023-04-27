@@ -2,7 +2,7 @@ version: "3.9"
 services:
   more-energy:
     build:
-      context: .
+      context: ./
       dockerfile: Dockerfile
     container_name: more-energy
     ports:
@@ -20,8 +20,8 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DATABASE}
     container_name: postgres
-    ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    # ports:
+    #   - "${POSTGRES_PORT}:${POSTGRES_PORT}"
 
   pgadmin:
     image: dpage/pgadmin4
