@@ -76,6 +76,7 @@ jobs:
   #   - name: Запуск образа
   #     run: docker compose up
   backend-run:
+    needs: build-and-deploy
     runs-on: ubuntu-latest
     steps:
       - name: Клонирование репозитория
