@@ -17,14 +17,14 @@ export class UsersService {
         return await this.usersRepository.find();
     }
     async createUser(dto: CreateUserDto): Promise<User | never> {
-        let user: User = await this.usersRepository.findOne({ where: { email: dto.email } });
+        const user: User = await this.usersRepository.findOne({ where: { email: dto.email } });
         if (user) {
             throw new HttpException(`Пользователь с ${dto.email} уже существует`, HttpStatus.CONFLICT);
         }
         return await this.usersRepository.save(dto);
     }
     async deleteUser(dto: DeleteUserDto): Promise<User | never> {
-        let user: User = await this.usersRepository.findOne({ where: { id: dto.id } });
+        const user: User = await this.usersRepository.findOne({ where: { id: dto.id } });
         if (!user) {
             throw new HttpException(`Пользователь с этим ID не существует`, HttpStatus.NOT_FOUND);
         }
