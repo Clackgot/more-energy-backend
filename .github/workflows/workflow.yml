@@ -26,7 +26,7 @@ jobs:
         run: npm run lint
 
   build-and-deploy:
-    needs: lint test
+    needs: lint
     runs-on: ubuntu-latest
     env:
       POSTGRES_USERNAME: ${{ secrets.POSTGRES_USERNAME }}
@@ -77,6 +77,14 @@ jobs:
   backend-run:
     needs: build-and-deploy
     runs-on: ubuntu-latest
+    env:
+      HTTP_PORT : ${{secrets.HTTP_PORT}}
+      JWT_EXPIRES : ${{secrets.JWT_EXPIRES}}
+      JWT_KEY : ${{secrets.JWT_KEY}}
+      POSTGRES_DATABASE : ${{secrets.POSTGRES_DATABASE}}
+      POSTGRES_PASSWORD : ${{secrets.POSTGRES_PASSWORD}}
+      POSTGRES_PORT : ${{secrets.POSTGRES_PORT}}
+      POSTGRES_USERNAME : ${{secrets.POSTGRES_USERNAME}}
     steps:
       - name: Клонирование репозитория
         uses: actions/checkout@v2
@@ -94,7 +102,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          envs: true
+          envs: HTTP_PORT, JWT_EXPIRES, JWT_KEY, POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USERNAME
           script: |
             rm -rf more-energy-backend/ && 
             git clone git@github.com:Clackgot/more-energy-backend.git && 
