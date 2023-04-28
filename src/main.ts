@@ -5,7 +5,7 @@ import { CorsOptions } from "@nestjs/common/interfaces/external/cors-options.int
 
 
 async function start() {
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.HTTP_PORT || 5000;
   const app = await NestFactory.create(AppModule);
   const options = new DocumentBuilder()
   .setTitle('My API')
