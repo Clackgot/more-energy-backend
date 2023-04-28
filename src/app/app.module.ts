@@ -15,8 +15,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get('POSTGRES_HOST'),
-        // host: 'postgres',
+        host: 'postgres',
         port: +configService.get<number>('POSTGRES_PORT'),
         username: configService.get('POSTGRES_USERNAME'),
         password: configService.get('POSTGRES_PASSWORD'),
