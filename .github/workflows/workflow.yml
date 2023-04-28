@@ -16,7 +16,6 @@ jobs:
       - name: Тестирование приложения
         run: npm run test
   lint:
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Клонирование репозитория
@@ -27,7 +26,7 @@ jobs:
         run: npm run lint
 
   build-and-deploy:
-    needs: lint
+    needs: lint test
     runs-on: ubuntu-latest
     env:
       POSTGRES_USERNAME: ${{ secrets.POSTGRES_USERNAME }}
