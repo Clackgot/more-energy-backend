@@ -31,4 +31,4 @@ jobs:
           port: 22
           
           envs: HTTP_PORT, JWT_EXPIRES, JWT_KEY, POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USERNAME
-          script: echo $POSTGRES_USERNAME
+          script: cd ~/more-energy-backend && docker compose up
