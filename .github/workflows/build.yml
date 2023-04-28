@@ -4,14 +4,14 @@ on: workflow_dispatch
 jobs:
   backend-run:
     runs-on: ubuntu-latest
-    env:
-      HTTP_PORT : ${{secrets.HTTP_PORT}}
-      JWT_EXPIRES : ${{secrets.JWT_EXPIRES}}
-      JWT_KEY : ${{secrets.JWT_KEY}}
-      POSTGRES_DATABASE : ${{secrets.POSTGRES_DATABASE}}
-      POSTGRES_PASSWORD : ${{secrets.POSTGRES_PASSWORD}}
-      POSTGRES_PORT : ${{secrets.POSTGRES_PORT}}
-      POSTGRES_USERNAME : ${{secrets.POSTGRES_USERNAME}}
+    # env:
+    #   HTTP_PORT : ${{secrets.HTTP_PORT}}
+    #   JWT_EXPIRES : ${{secrets.JWT_EXPIRES}}
+    #   JWT_KEY : ${{secrets.JWT_KEY}}
+    #   POSTGRES_DATABASE : ${{secrets.POSTGRES_DATABASE}}
+    #   POSTGRES_PASSWORD : ${{secrets.POSTGRES_PASSWORD}}
+    #   POSTGRES_PORT : ${{secrets.POSTGRES_PORT}}
+    #   POSTGRES_USERNAME : ${{secrets.POSTGRES_USERNAME}}
     steps:
       - name: Клонирование репозитория
         uses: actions/checkout@v2
@@ -31,4 +31,4 @@ jobs:
           port: 22
           
           envs: HTTP_PORT, JWT_EXPIRES, JWT_KEY, POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USERNAME
-          script: ./build.sh $HTTP_PORT $JWT_EXPIRES $JWT_KEY $POSTGRES_DATABASE $POSTGRES_PASSWORD $POSTGRES_PORT $POSTGRES_USERNAME
+          script: echo $POSTGRES_USERNAME
