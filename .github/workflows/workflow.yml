@@ -15,7 +15,8 @@ jobs:
         run: npm ci
       - name: Тестирование приложения
         run: npm run test
-  lint: 
+  lint:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Клонирование репозитория
@@ -24,7 +25,34 @@ jobs:
         run: npm ci
       - name: Проверка синтаксиса линтером
         run: npm run lint
+
   build-and-deploy:
+    needs: lint
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_USERNAME: ${{ secrets.POSTGRES_USERNAME }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
+
+      HTTP_PORT: ${{ secrets.HTTP_PORT }}
+
+      JWT_KEY: ${{ secrets.JWT_KEY }}
+      JWT_EXPIRES: ${{ secrets.JWT_EXPIRES }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Авторизация в DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Сборка образа
+      run: docker compose build
+    - name: Запуск образа
+      run: docker compose push
+
+  pull-and-run:
+    needs: build-and-deploy
     runs-on: ubuntu-latest
     env:
       POSTGRES_USERNAME: ${{ secrets.POSTGRES_USERNAME }}
@@ -47,7 +75,6 @@ jobs:
       run: docker compose pull
     - name: Запуск образа
       run: docker compose up
-    
   # deploy:
   #   runs-on: ubuntu-latest
   #   steps:
