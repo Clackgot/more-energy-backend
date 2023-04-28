@@ -15,6 +15,15 @@ jobs:
         run: npm ci
       - name: Тестирование приложения
         run: npm run test
+  lint: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Клонирование репозитория
+        uses: actions/checkout@v3
+      - name: Установка зависимостей
+        run: npm ci
+      - name: Проверка синтаксиса линтером
+        run: npm run lint
   build-and-deploy:
     runs-on: ubuntu-latest 
     steps:
@@ -33,24 +42,24 @@ jobs:
         context: .
         command: push
     
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Клонирование репозитория
-        uses: actions/checkout@v2
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Клонирование репозитория
+  #       uses: actions/checkout@v2
 
-      # Установка дополнительного ПО необходимого для работа ssh-action
-      - name: Установка дополнительного ПО необходимого для работа ssh-action
-        run: |
-          sudo apt-get update
-          sudo apt-get install openssh-client -y
+  #     # Установка дополнительного ПО необходимого для работа ssh-action
+  #     - name: Установка дополнительного ПО необходимого для работа ssh-action
+  #       run: |
+  #         sudo apt-get update
+  #         sudo apt-get install openssh-client -y
 
-      # Подключение к удаленному серверу и выполнение команд
-      - name: Подключение к серверу
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: ls -la ~
+  #     # Подключение к удаленному серверу и выполнение команд
+  #     - name: Подключение к серверу
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.REMOTE_HOST }}
+  #         username: ${{ secrets.REMOTE_USER }}
+  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #         port: 22
+  #         script: ls -la ~
