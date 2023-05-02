@@ -10,12 +10,14 @@ services:
     image: clackgot/more-energy:latest
     depends_on:
       - postgres
+    env_file:
+      - .env
 
   postgres:
     image: postgres:alpine
     restart: always
     env_file:
-      - '.env'
+      - .env
     # environment:
     #   # - POSTGRES_HOST=${POSTGRES_HOST}
     #   - POSTGRES_USER=${POSTGRES_USERNAME}
