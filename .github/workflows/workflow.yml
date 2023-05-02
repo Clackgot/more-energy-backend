@@ -48,7 +48,7 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Сборка образа
       run: docker compose build
-    - name: Запуск образа
+    - name: Отправка образа в DockerHub
       run: docker compose push
 
   # pull-and-run:
