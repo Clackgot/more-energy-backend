@@ -17,9 +17,9 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
         type: 'postgres',
         host: 'postgres',
         port: +configService.get<number>('POSTGRES_PORT'),
-        username: configService.get('POSTGRES_USERNAME'),
+        username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
-        database: configService.get('POSTGRES_DATABASE'),
+        database: configService.get('POSTGRES_DB'),
         entities: [__dirname + '/../**/*.entity.{js,ts}'],
         synchronize: true
       }),
