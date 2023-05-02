@@ -98,4 +98,4 @@ jobs:
             echo "POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}}" >> .env
             echo "POSTGRES_PORT=${{secrets.POSTGRES_PORT}}" >> .env
             echo "POSTGRES_USER=${{secrets.POSTGRES_USER}}" >> .env
-            cd ~ && rm -rf more-energy-backend/ && git clone git@github.com:Clackgot/more-energy-backend.git && cd more-energy-backend/ && cp env.example .env && docker-compose down --remove-orphans && docker compose up --pull --force-recreate
+            cd ~ && rm -rf more-energy-backend/ && git clone git@github.com:Clackgot/more-energy-backend.git && cd more-energy-backend/ && cp env.example .env && docker-compose down --remove-orphans && docker compose up -d --pull --force-recreate
