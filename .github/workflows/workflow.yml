@@ -1,10 +1,10 @@
 name: CI/CD
 
-on: workflow_dispatch
-# on:
-#   push:
-#     branches:
-#       - master
+# on: workflow_dispatch
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   test:
@@ -51,30 +51,6 @@ jobs:
     - name: Отправка образа в DockerHub
       run: docker compose push
 
-  # pull-and-run:
-  #   needs: build-and-deploy
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     POSTGRES_USERNAME: ${{ secrets.POSTGRES_USERNAME }}
-  #     POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-  #     POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
-
-  #     HTTP_PORT: ${{ secrets.HTTP_PORT }}
-
-  #     JWT_KEY: ${{ secrets.JWT_KEY }}
-  #     JWT_EXPIRES: ${{ secrets.JWT_EXPIRES }}
-  #   steps:
-  #   - uses: actions/checkout@v3
-
-  #   - name: Авторизация в DockerHub
-  #     uses: docker/login-action@v2
-  #     with:
-  #       username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #       password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #   - name: Получение образа
-  #     run: docker compose pull
-  #   - name: Запуск образа
-  #     run: docker compose up
   backend-run:
     needs: build-and-deploy
     runs-on: ubuntu-latest
