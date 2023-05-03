@@ -91,6 +91,7 @@ jobs:
           
           envs: HTTP_PORT, JWT_EXPIRES, JWT_KEY, POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USERNAME
           script: |
+            cd ~ && rm -rf more-energy-backend/ && git clone git@github.com:Clackgot/more-energy-backend.git && cd more-energy-backend/
             echo "HTTP_PORT=${{secrets.HTTP_PORT}}" >> .env
             echo "JWT_EXPIRES=${{secrets.JWT_EXPIRES}}" >> .env
             echo "JWT_KEY=${{secrets.JWT_KEY}}" >> .env
@@ -98,4 +99,4 @@ jobs:
             echo "POSTGRES_PASSWORD=${{secrets.POSTGRES_PASSWORD}}" >> .env
             echo "POSTGRES_PORT=${{secrets.POSTGRES_PORT}}" >> .env
             echo "POSTGRES_USER=${{secrets.POSTGRES_USER}}" >> .env
-            cd ~ && rm -rf more-energy-backend/ && git clone git@github.com:Clackgot/more-energy-backend.git && cd more-energy-backend/ && docker-compose down --remove-orphans && docker compose up -d --pull --force-recreate
+            docker-compose down --remove-orphans && docker compose up -d --pull --force-recreate
