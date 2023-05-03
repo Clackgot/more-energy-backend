@@ -1,10 +1,10 @@
 name: CI/CD
 
-# on: workflow_dispatch
-on:
-  push:
-    branches:
-      - master
+on: workflow_dispatch
+# on:
+#   push:
+#     branches:
+#       - master
 
 jobs:
   test:
@@ -34,6 +34,7 @@ jobs:
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
 
+      API_SERVER_DOMAIN: ${{ secrets.API_SERVER_DOMAIN }}
       API_SERVER_PORT: ${{ secrets.API_SERVER_PORT }}
 
       JWT_KEY: ${{ secrets.JWT_KEY }}
@@ -48,6 +49,7 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Создание .env файла
       run: |
+        echo "API_SERVER_DOMAIN=${{secrets.API_SERVER_DOMAIN}}" >> .env
         echo "API_SERVER_PORT=${{secrets.API_SERVER_PORT}}" >> .env
         echo "JWT_EXPIRES=${{secrets.JWT_EXPIRES}}" >> .env
         echo "JWT_KEY=${{secrets.JWT_KEY}}" >> .env
@@ -64,6 +66,7 @@ jobs:
     needs: build-and-deploy
     runs-on: ubuntu-latest
     env:
+      API_SERVER_DOMAIN : ${{secrets.API_SERVER_DOMAIN}}
       API_SERVER_PORT : ${{secrets.API_SERVER_PORT}}
       JWT_EXPIRES : ${{secrets.JWT_EXPIRES}}
       JWT_KEY : ${{secrets.JWT_KEY}}
@@ -89,9 +92,10 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           
-          envs: API_SERVER_PORT, JWT_EXPIRES, JWT_KEY, POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USERNAME
+          envs: API_SERVER_PORT, API_SERVER_DOMAIN, JWT_EXPIRES, JWT_KEY, POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_PORT, POSTGRES_USERNAME
           script: |
             cd ~ && rm -rf more-energy-backend/ && git clone git@github.com:Clackgot/more-energy-backend.git && cd more-energy-backend/
+            echo "API_SERVER_DOMAIN=${{secrets.API_SERVER_DOMAIN}}" >> .env
             echo "API_SERVER_PORT=${{secrets.API_SERVER_PORT}}" >> .env
             echo "JWT_EXPIRES=${{secrets.JWT_EXPIRES}}" >> .env
             echo "JWT_KEY=${{secrets.JWT_KEY}}" >> .env
