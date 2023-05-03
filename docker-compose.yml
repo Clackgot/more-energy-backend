@@ -39,6 +39,8 @@ services:
       - 443:443
     depends_on:
       - more-energy
+    env_file:
+      - .env
      
   pgadmin:
     image: dpage/pgadmin4
