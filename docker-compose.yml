@@ -41,6 +41,7 @@ services:
       - more-energy
     env_file:
       - .env
+    command: apt update && apt-get install -y nmap && apt-get install -y nmap
      
   pgadmin:
     image: dpage/pgadmin4
