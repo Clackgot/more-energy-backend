@@ -16,6 +16,6 @@ COPY . .
 # Creates a "dist" folder with the production build
 RUN npm run build
 
-EXPOSE $HTTP_PORT
+EXPOSE $API_SERVER_PORT
 # Start the server using the production build
 CMD [ "npm", "run", "start" ]
