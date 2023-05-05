@@ -33,4 +33,7 @@ export class UpdateUserDto {
   })
   @IsString()
   readonly username?: string;
+
+  @IsString()
+  readonly refeshToken?: string;
 }

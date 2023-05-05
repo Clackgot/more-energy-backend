@@ -10,7 +10,7 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 @Injectable()
 export class UsersService {
     constructor(@InjectRepository(User)
-    private readonly usersRepository: Repository<User>,) { }
+    private readonly usersRepository: Repository<User>) { }
 
 
     async getUsers(): Promise<User[] | never> {
@@ -39,12 +39,19 @@ export class UsersService {
         return await this.usersRepository.save(updatedUser)
     }
 
-    async getUser(id: number): Promise<User | never> {
+    async getUserById(id: number): Promise<User | never> {
         const user = await this.usersRepository.findOne({ where: { id } });
         if (!user) {
             throw new HttpException(`Пользователь с ID ${id} не найден`, HttpStatus.NOT_FOUND);
         }
         return user;
     }
+    async getUserByEmail(email: string): Promise<User> {
+      const user = await this.usersRepository.findOne({ where: { email } });
+      // if (!user) {
+      //     throw new HttpException(`Пользователь ${email} не найден`, HttpStatus.NOT_FOUND);
+      // }
+      return user;
+  }
 
 }

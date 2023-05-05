@@ -1,65 +1,108 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { LoginDto } from "./dto/login.dto";
-import { RegisterDto } from "./dto/register.dto";
-import { AuthHelper } from './auth.helper';
-import { User } from '../entities/user.entity'
-import { TokenDto } from './dto/token.dto';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 
+import * as argon2 from 'argon2';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { AuthDto } from './dto/auth.dto';
+import { CreateUserDto } from 'src/users/dto/createUser.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
-  // @InjectRepository(User)
-  // private readonly repository: Repository<User>;
-
-  // @Inject(AuthHelper)
-  // private readonly helper: AuthHelper;
-
   constructor(
-    @InjectRepository(User)
-    private readonly repository: Repository<User>,
-    private readonly helper: AuthHelper
-  ) { }
-
-  public async register(body: RegisterDto): Promise<User | never> {
-    const { username, email, password }: RegisterDto = body;
-    let user: User = await this.repository.findOne({ where: { email } });
-
-    if (user) {
-      throw new HttpException('Conflict', HttpStatus.CONFLICT);
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
+  async signUp(createUserDto: CreateUserDto): Promise<any> {
+    // Check if user exists
+    const userExists = await this.usersService.getUserByEmail(createUserDto.email);
+    console.log(userExists);
+    if (userExists) {
+      throw new BadRequestException(`Пользователь ${createUserDto.email} уже существует`);
     }
 
-    user = new User();
-
-    user.username = username;
-    user.email = email;
-    user.password = this.helper.encodePassword(password);
-
-    return this.repository.save(user);
+    // Hash password
+    const hash = await this.hashData(createUserDto.password);
+    const newUser = await this.usersService.createUser({
+      ...createUserDto,
+      password: hash,
+    });
+    const tokens = await this.getTokens(newUser.id, newUser.email);
+    await this.updateRefreshToken(newUser.id, tokens.refreshToken);
+    return tokens;
   }
 
-  public async login(body: LoginDto): Promise<TokenDto | never> {
-    const { email, password }: LoginDto = body;
-    const user: User = await this.repository.findOne({ where: { email } });
-
-    if (!user) {
-      throw new HttpException('Пользователь с таким email не найден', HttpStatus.NOT_FOUND);
-    }
-
-    const isPasswordValid: boolean = this.helper.isPasswordValid(password, user.password);
-
-    if (!isPasswordValid) {
-      throw new HttpException('Такой пользователь не найден', HttpStatus.NOT_FOUND);
-    }
-
-    this.repository.update(user.id, { lastLoginAt: new Date() });
-
-    return { token: this.helper.generateToken(user) } as TokenDto;
+  async signIn(data: AuthDto) {
+    // Check if user exists
+    const user = await this.usersService.getUserByEmail(data.email);
+    if (!user) throw new BadRequestException('User does not exist');
+    const passwordMatches = await argon2.verify(user.password, data.password);
+    if (!passwordMatches)
+      throw new BadRequestException('Password is incorrect');
+    const tokens = await this.getTokens(user.id, user.username);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
   }
 
-  public async refresh(user: User): Promise<string> {
-    this.repository.update(user.id, { lastLoginAt: new Date() });
-    return this.helper.generateToken(user);
+  async logout(userId: number) {
+    this.usersService.updateUser({id: userId, refeshToken: null});
+  }
+
+  async refreshTokens(userId: number, refreshToken: string) {
+    const user = await this.usersService.getUserById(userId);
+    if (!user || !user.refreshToken)
+      throw new ForbiddenException('Access Denied');
+    const refreshTokenMatches = await argon2.verify(
+      user.refreshToken,
+      refreshToken,
+    );
+    if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
+    const tokens = await this.getTokens(user.id, user.username);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
+  }
+
+  hashData(data: string) {
+    return argon2.hash(data);
+  }
+
+  async updateRefreshToken(userId: number, refreshToken: string) {
+    const hashedRefreshToken = await this.hashData(refreshToken);
+    await this.usersService.updateUser({id: userId, refeshToken: hashedRefreshToken});
+  }
+
+  async getTokens(userId: number, username: string) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          username,
+        },
+        {
+          secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+          expiresIn: '15m',
+        },
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          username,
+        },
+        {
+          secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+          expiresIn: '7d',
+        },
+      ),
+    ]);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 }

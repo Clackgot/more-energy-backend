@@ -16,5 +16,8 @@ export class User {
   username: string;
 
   @Column({ type: 'timestamp', nullable: true, default: null })
-  public lastLoginAt: Date | null;
+  lastLoginAt: Date | null;
+
+  @Column({nullable:true})
+  refreshToken: string;
 }

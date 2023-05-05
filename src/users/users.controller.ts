@@ -22,7 +22,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'Пользователь не найден' })
   @Get(':id')
   getUser(@Param('id') id: number) {
-    return this.usersService.getUser(id);
+    return this.usersService.getUserById(id);
   }
 
   @ApiOperation({ summary: 'Создать пользователя' })
