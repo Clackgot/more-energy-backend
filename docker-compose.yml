@@ -9,60 +9,37 @@ services:
     image: clackgot/more-energy:latest
     depends_on:
       - postgres
-    env_file:
-      - .env
+
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.more-energy.rule=Host(`${API_SERVER_DOMAIN}`) && PathPrefix(`/`)
-      - traefik.http.services.more-energy.loadbalancer.server.port=${API_SERVER_PORT}
-      
-
-      - "traefik.http.routers.my-service.rule=Host(`${API_SERVER_DOMAIN}`)"
-      - "traefik.http.routers.my-service.entrypoints=web_secure"
-      - "traefik.http.routers.my-service.tls=true"
-      - "traefik.http.routers.my-service.tls.certresolver=myresolver"
-      # - traefik.https.routers.more-energy-secure.rule=Host(`${API_SERVER_DOMAIN}`) && PathPrefix(`/`)
-      # - traefik.https.routers.more-energy-secure.entrypoints=https
-      # - traefik.https.routers.more-energy-secure.tls=true
-      # - traefik.https.routers.more-energy-secure.tls.certresolver=myresolver
-
+      - "traefik.enable=true"
+      - "traefik.http.routers.nest.rule=Host(`${API_SERVER_DOMAIN}`)"
+      - "traefik.http.routers.nest.tls=true"
+      - "traefik.http.routers.nest.entrypoints=https"
+      - "traefik.http.routers.nest.tls.certresolver=myresolver"
   postgres:
     image: postgres:alpine
     restart: always
-    env_file:
-      - .env
+
     container_name: postgres
 
   traefik:
     image: traefik:latest
     container_name: traefik
     command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web_secure.address=:443"
-      # - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
-      # - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare"
-      # - "--certificatesresolvers.myresolver.acme.email=clackgott@gmail.com"
-      # - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-      # - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      # - "--certificatesresolvers.myresolver.acme.caServer=https://acme-v02.api.letsencrypt.org/directory"
       
-      # - "--certificatesResolvers.myresolver.acme.tlschallenge=true"
-      # - "--certificatesresolvers.myresolver.acme.tlschallenge.domains-sans=${API_SERVER_DOMAIN}"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web_secure"
-      - "--certificatesresolvers.myresolver.acme.email=clackgott@gmail.com"
 
     ports:
       - ${TRAEFIK_HTTP_PORT}:80
       - ${TRAEFIK_HTTPS_PORT}:443
       - ${TRAEFIK_DASHBOARD_PORT}:8080
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./domain.crt:/ssl/domain.crt
-      - ./domain.key:/ssl/domain.key
+      # - /var/run/docker.sock:/var/run/docker.sock
+      # - ./domain.crt:/ssl/domain.crt
+      # - ./domain.key:/ssl/domain.key
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/traefik.yml:ro
+      - ./ssl:/ssl
 
   pgadmin:
     image: dpage/pgadmin4
