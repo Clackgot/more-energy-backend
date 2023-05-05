@@ -14,13 +14,13 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.more-energy.rule=Host(`${API_SERVER_DOMAIN}`)
-      - "traefik.http.routers.more-energy.entrypoints=web"
+      - traefik.http.routers.more-energy.entrypoints=web
 
       # - traefik.http.services.more-energy.loadbalancer.server.port=${API_SERVER_PORT}
       
 
-      - "traefik.http.routers.more-energy-secure.rule=Host(`${API_SERVER_DOMAIN}`)"
-      - "traefik.http.routers.more-energy-secure.entrypoints=web_secure"
+      - traefik.http.routers.more-energy-secure.rule=Host(`${API_SERVER_DOMAIN}`)
+      - traefik.http.routers.more-energy-secure.entrypoints=web_secure
       # - "traefik.http.routers.more-energy-secure.tls=true"
       # - "traefik.http.routers.more-energy-secure.tls.certresolver=myresolver"
       # - traefik.https.routers.more-energy-secure.rule=Host(`${API_SERVER_DOMAIN}`) && PathPrefix(`/`)
@@ -39,11 +39,11 @@ services:
     image: traefik:latest
     container_name: traefik
     command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web_secure.address=:443"
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web_secure.address=:443
       # - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
       # - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare"
       # - "--certificatesresolvers.myresolver.acme.email=clackgott@gmail.com"
@@ -53,7 +53,7 @@ services:
       
       # - "--certificatesResolvers.myresolver.acme.tlschallenge=true"
       # - "--certificatesresolvers.myresolver.acme.tlschallenge.domains-sans=${API_SERVER_DOMAIN}"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - --certificatesresolvers.myresolver.acme.httpchallenge=true
       # - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web_secure"
       # - "--certificatesresolvers.myresolver.acme.email=clackgott@gmail.com"
 
