@@ -13,14 +13,16 @@ services:
       - .env
     labels:
       - traefik.enable=true
-      - traefik.http.routers.more-energy.rule=Host(`${API_SERVER_DOMAIN}`) && PathPrefix(`/`)
-      - traefik.http.services.more-energy.loadbalancer.server.port=${API_SERVER_PORT}
+      - traefik.http.routers.more-energy.rule=Host(`${API_SERVER_DOMAIN}`)
+      - "traefik.http.routers.more-energy.entrypoints=web"
+
+      # - traefik.http.services.more-energy.loadbalancer.server.port=${API_SERVER_PORT}
       
 
-      - "traefik.http.routers.my-service.rule=Host(`${API_SERVER_DOMAIN}`)"
-      - "traefik.http.routers.my-service.entrypoints=web_secure"
-      - "traefik.http.routers.my-service.tls=true"
-      - "traefik.http.routers.my-service.tls.certresolver=myresolver"
+      - "traefik.http.routers.more-energy-secure.rule=Host(`${API_SERVER_DOMAIN}`)"
+      - "traefik.http.routers.more-energy-secure.entrypoints=web_secure"
+      # - "traefik.http.routers.more-energy-secure.tls=true"
+      # - "traefik.http.routers.more-energy-secure.tls.certresolver=myresolver"
       # - traefik.https.routers.more-energy-secure.rule=Host(`${API_SERVER_DOMAIN}`) && PathPrefix(`/`)
       # - traefik.https.routers.more-energy-secure.entrypoints=https
       # - traefik.https.routers.more-energy-secure.tls=true
@@ -52,8 +54,8 @@ services:
       # - "--certificatesResolvers.myresolver.acme.tlschallenge=true"
       # - "--certificatesresolvers.myresolver.acme.tlschallenge.domains-sans=${API_SERVER_DOMAIN}"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web_secure"
-      - "--certificatesresolvers.myresolver.acme.email=clackgott@gmail.com"
+      # - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web_secure"
+      # - "--certificatesresolvers.myresolver.acme.email=clackgott@gmail.com"
 
     ports:
       - ${TRAEFIK_HTTP_PORT}:80
