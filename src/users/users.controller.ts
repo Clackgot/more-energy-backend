@@ -1,15 +1,17 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { DeleteUserDto } from './dto/deleteUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(@Inject(UsersService) private readonly usersService: UsersService) {}
 
+  @UseGuards(AccessTokenGuard)
   @ApiOperation({ summary: 'Получить всех пользователей' })
   @ApiResponse({ status: 200, description: 'Успешный ответ', type: [CreateUserDto] })
   @Get()
